@@ -35,13 +35,25 @@ export class OrderPage implements OnInit {
     await loading.present();
     this.inAppPurchase.ready((status) => {
       console.log('Store is Ready: ' + JSON.stringify(status));
+      this.inAppPurchase.verbosity = this.inAppPurchase.DEBUG;  // for test
       this.initProductListeners();
+      loading.dismiss();
+    });
+
+    this.inAppPurchase.error((err) => {
+      console.log('Store is error: ' + JSON.stringify(err));
       loading.dismiss();
     });
   }
 
   private initProductListeners() {
     const productId = this.route.snapshot.queryParamMap.get('product');
+
+    this.inAppPurchase.register({
+      id: productId,
+      type: this.inAppPurchase.NON_CONSUMABLE,
+      alias: productId
+    });
 
     console.log(JSON.stringify(this.inAppPurchase.get(productId)));
     console.log('Products: ' + JSON.stringify(this.inAppPurchase.products));
@@ -55,6 +67,8 @@ export class OrderPage implements OnInit {
     this.inAppPurchase.when(productId).updated(this.onProductUpdated);
 
     this.refreshProduct(this.inAppPurchase.get(productId));
+
+    this.inAppPurchase.refresh();
   }
 
   private refreshProduct(product: IAPProduct) {
