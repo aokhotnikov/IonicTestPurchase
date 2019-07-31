@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Tab One
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="welcome-card">
+      <ion-card-header>
+        <ion-card-subtitle>alloha</ion-card-subtitle>
+        <ion-card-title>Welcome to App</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>This is application for testing purchases</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-list lines="none">
+      <ion-list-header>
+        <ion-label>Products</ion-label>
+      </ion-list-header>
+      <ion-item *ngFor="let product of productSrv.productIDs" (click)="openOrderPage(product)">
+        <ion-icon slot="start" color="medium" name="basket"></ion-icon>
+        <ion-label>{{ product }}</ion-label>
+      </ion-item>
+    </ion-list>
+</ion-content>
