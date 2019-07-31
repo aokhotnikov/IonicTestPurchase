@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IAPError, IAPProduct, IAPQueryCallback, InAppPurchase2 } from '@ionic-native/in-app-purchase-2/ngx';
-import { LoadingController, Platform } from '@ionic/angular';
+import { LoadingController, Platform, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-order',
@@ -16,6 +16,7 @@ export class OrderPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private platform: Platform,
+    public toastCtrl: ToastController,
     private inAppPurchase: InAppPurchase2,
     public loadingCtrl: LoadingController
   ) {
@@ -72,7 +73,7 @@ export class OrderPage implements OnInit {
       console.log('order success : ' + JSON.stringify(data));
     } catch (err) {
       console.log('order error : ' + JSON.stringify(err));
-      this.showUnexpectedErrorMessage();
+      this.showUnexpectedErrorMessage(err);
     }
     loading.dismiss();
   }
@@ -80,18 +81,18 @@ export class OrderPage implements OnInit {
   onProductApproved(product: IAPProduct) {
     console.log('onProductApproved', product);
     // Verify the transaction data on the backend
-    this.showSuccessPurchaseMessage();
+    this.showSuccessPurchaseMessage(product);
     product.finish();
   }
 
   onProductCancelled(product: IAPProduct) {
     console.log('onProductCancelled', product);
-    this.showCanceledPurchaseMessage();
+    this.showCanceledPurchaseMessage(product);
   }
 
   onProductError(error: IAPError) {
     console.log('onProductError', error);
-    this.showUnexpectedErrorMessage();
+    this.showUnexpectedErrorMessage(error);
   }
 
   onProductUpdated(product: IAPProduct) {
@@ -99,16 +100,28 @@ export class OrderPage implements OnInit {
     this.refreshProduct(product);
   }
 
-  private showSuccessPurchaseMessage() {
-    // TODO : Show success dialog
+  private async showSuccessPurchaseMessage(product: IAPProduct) {
+    const toast = await this.toastCtrl.create({
+      message: 'SUCCESS: ' + JSON.stringify(product),
+      duration: 5000
+    });
+    toast.present();
   }
 
-  private showUnexpectedErrorMessage() {
-    // TODO : Show error dialog
+  private async showUnexpectedErrorMessage(error) {
+    const toast = await this.toastCtrl.create({
+      message: 'ERROR: ' + JSON.stringify(error),
+      duration: 5000
+    });
+    toast.present();
   }
 
-  private showCanceledPurchaseMessage() {
-    // TODO : Show error dialog
+  private async showCanceledPurchaseMessage(product: IAPProduct) {
+    const toast = await this.toastCtrl.create({
+      message: 'CANCEL: ' + JSON.stringify(product),
+      duration: 5000
+    });
+    toast.present();
   }
 
   ionViewDidLeave() {
